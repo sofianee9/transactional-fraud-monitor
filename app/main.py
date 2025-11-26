@@ -25,7 +25,7 @@ with st.sidebar:
     st.markdown("## Sofiane El Morabit")
     st.markdown("Business/Digital/Data Analyst")
     st.markdown("---")
-    st.markdown("👉 [Mon Profil LinkedIn](https://www.linkedin.com/in/sofiane-el-morabit-4a71aa20b//)")
+    st.markdown("👉 [Mon Profil LinkedIn](https://www.linkedin.com/in/sofiane-el-morabit-4a71aa20b/)")
     st.markdown("👉 [Mon Portfolio GitHub](https://github.com/sofianee9/)")
     st.markdown("---")
     st.markdown("**Tech Stack :**")
@@ -81,19 +81,30 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- FONCTION DE CHARGEMENT ---
+# --- FONCTION DE CHARGEMENT (CORRIGÉE) ---
 @st.cache_data
 def load_data_and_metrics():
-    if not os.path.exists(DATA_PATH): return None, None, None, None, None
-    df = pd.read_csv(DATA_PATH, nrows=150000)
+    # Toujours renvoyer 6 valeurs, même en cas d'erreur
+    if not os.path.exists(DATA_PATH):
+        return None, None, None, None, None, None
+
+    df = pd.read_csv(DATA_PATH)
     X = df.drop('Class', axis=1)
     y = df['Class']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-    if not os.path.exists(MODEL_PATH): return None, None, None, None, None
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
+
+    if not os.path.exists(MODEL_PATH):
+        return None, None, None, None, None, None
+
     model = joblib.load(MODEL_PATH)
     y_pred = model.predict(X_test)
     y_proba = model.predict_proba(X_test)[:, 1]
+
     return df, X_test, y_test, y_pred, y_proba, model
+
 
 # --- EXÉCUTION ---
 df_full, X_test, y_test, y_pred, y_proba, model = load_data_and_metrics()
@@ -143,7 +154,6 @@ st.markdown("""
   </ul>
 </div>
 """, unsafe_allow_html=True)
-
 
 # --- CALCULS ---
 fraud_rate = (df_full['Class'].sum() / len(df_full)) * 100
