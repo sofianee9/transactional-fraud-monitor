@@ -50,10 +50,10 @@ Algorithme : LogisticRegression avec le paramètre class_weight='balanced'.
 
 fraud-monitor/
 ├── app/
-│   ├── main.py          # Interface Streamlit (Front-end)
-│   └── fraud_model.pkl  # Modèle entraîné (Back-end)
-├── data/                # Données brutes (Non incluses sur GitHub)
-├── notebooks/           # Laboratoire de recherche (EDA, Tests)
-├── src/                 # Scripts ETL et Entraînement
-├── requirements.txt     # Dépendances
-└── README.md            # Documentation
+│   ├── main.py
+│   └── fraud_model.pkl
+├── data/
+├── notebooks/
+├── src/        
+├── requirements.txt
+└── README.md
