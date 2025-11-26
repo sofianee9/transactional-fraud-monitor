@@ -85,7 +85,7 @@ st.markdown("""
 @st.cache_data
 def load_data_and_metrics():
     if not os.path.exists(DATA_PATH): return None, None, None, None, None
-    df = pd.read_csv(DATA_PATH, nrows=200000)
+    df = pd.read_csv(DATA_PATH, nrows=150000)
     X = df.drop('Class', axis=1)
     y = df['Class']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
