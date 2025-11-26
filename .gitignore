@@ -1,5 +1,4 @@
-data/
-*.csv
+data/creditcard_full.csv
 
 venv/
 __pycache__/
