@@ -43,7 +43,7 @@ st.markdown("""
         .block-container { padding-top: 5rem; padding-bottom: 3rem; }
         h1, h2, h3 { color: #0F172A !important; font-family: sans-serif; font-weight: 700; }
         div[data-testid="stMetric"] { display: none; }
-        div.stAlert { display: none; }
+        
 
         [data-testid="stSidebar"] {
             background-color: #0F172A !important;
@@ -81,37 +81,35 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- FONCTION DE CHARGEMENT (CORRIGÉE) ---
+# --- FONCTION DE CHARGEMENT ---
 @st.cache_data
 def load_data_and_metrics():
-    # Toujours renvoyer 6 valeurs, même en cas d'erreur
-    if not os.path.exists(DATA_PATH):
-        return None, None, None, None, None, None
-
+    # 1. Charger les données
     df = pd.read_csv(DATA_PATH)
+
+    # 2. Split features / target
     X = df.drop('Class', axis=1)
     y = df['Class']
 
+    # 3. Train / test split (pour les métriques et le simulateur)
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    if not os.path.exists(MODEL_PATH):
-        return None, None, None, None, None, None
-
+    # 4. Charger le modèle
     model = joblib.load(MODEL_PATH)
+
+    # 5. Prédictions + proba
     y_pred = model.predict(X_test)
     y_proba = model.predict_proba(X_test)[:, 1]
 
+    # 6. Toujours retourner 6 objets
     return df, X_test, y_test, y_pred, y_proba, model
 
 
 # --- EXÉCUTION ---
 df_full, X_test, y_test, y_pred, y_proba, model = load_data_and_metrics()
 
-if df_full is None:
-    st.error("❌ Erreur : Données ou Modèle introuvable.")
-    st.stop()
 
 # --- HEADER ---
 st.markdown("""
