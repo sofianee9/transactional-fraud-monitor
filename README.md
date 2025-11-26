@@ -1,0 +1,106 @@
+# 🛡️ Fraud Monitor : Système de Détection de Fraude Transactionnelle
+
+**Projet Data Science & Risque Financier** réalisé par **Sofiane El Morabit**.
+
+[![Python](https://img.shields.io/badge/Python-3.10-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![Scikit-Learn](https://img-shields.io/badge/scikit--learn-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+
+---
+
+## 📋 Contexte & Enjeux Business
+
+Les institutions financières subissent des pertes massives dues aux transactions frauduleuses. Le défi technique majeur de ce projet est le **déséquilibre extrême des classes** : les fraudes représentent seulement **0.17%** du volume total des transactions, rendant les règles statistiques classiques inefficaces.
+
+**Objectifs du Projet :**
+1.  **Minimiser le Risque Financier :** Détecter le maximum de fraudes réelles (Priorité au **Recall**).
+2.  **Industrialisation :** Fournir un outil de scoring en temps réel pour les équipes d'audit via un Dashboard interactif.
+3.  **Explicabilité :** Comprendre quelles variables techniques déclenchent une alerte.
+
+---
+## ⚙️ Architecture du Pipeline MLOps
+
+Le projet suit un pipeline rigoureux pour garantir la robustesse du modèle face au déséquilibre des données.
+
+```mermaid
+graph LR
+A[Données Brutes - creditcard.csv] --> B(Nettoyage / Prétraitement)
+B --> C{Stratégie Déséquilibre}
+C -->|SMOTE| D[Génération Données Synthétiques]
+D --> E[Entraînement Modèle]
+E --> F[Logistic Regression Pondérée]
+F --> G[Dashboard Streamlit]
+
+1. Exploration (EDA)
+Analyse des distributions (Montants, Temps).
+
+Mise en évidence du ratio critique (0.17% fraude vs 99.83% légitime).
+
+Voir les analyses détaillées dans le dossier /notebooks.
+
+2. Stratégie de Modélisation
+Problème : Un modèle standard ignorerait la fraude pour maximiser sa précision globale (Accuracy Paradox).
+
+Solution : Utilisation de SMOTE (Synthetic Minority Over-sampling Technique) pour rééquilibrer l'entraînement sans toucher au jeu de test (pour éviter la fuite de données / Data Leakage).
+
+Algorithme : LogisticRegression avec le paramètre class_weight='balanced' pour pénaliser fortement les erreurs sur la classe minoritaire.
+
+---
+
+## 🏆 Résultats & Performance
+
+Le modèle est calibré pour la **Sécurité Bancaire** : il vaut mieux vérifier une transaction légitime (Faux Positif) que de laisser passer un vol (Faux Négatif).
+
+| Métrique | Score | Interprétation Business |
+| :--- | :--- | :--- |
+| **Recall (Rappel)** | **~90%** | **Critique.** Nous bloquons 9 tentatives de fraudes sur 10. |
+| **ROC-AUC** | **0.97** | Le modèle distingue excellement bien les profils fraudeurs des clients normaux. |
+| **Précision** | ~6-10% | On accepte des faux positifs (fausses alertes de sécurité) pour garantir l'étanchéité du système. |
+
+---
+
+## 🚀 Installation & Lancement
+
+Pour tester le projet en local sur votre machine :
+
+1.  **Cloner le dépôt :**
+    ```bash
+    git clone [https://github.com/](https://github.com/)[sofianee9]/transactional-fraud-monitor.git
+    cd transactional-fraud-monitor
+    ```
+
+2.  **Installer les dépendances :**
+    ```bash
+    # Création de l'environnement virtuel (recommandé)
+    python -m venv venv
+    # Windows : .\venv\Scripts\activate
+    # Mac/Linux : source venv/bin/activate
+
+    # Installation
+    pip install -r requirements.txt
+    ```
+
+3.  **Lancer l'application :**
+    ```bash
+    # Si le modèle n'est pas présent, l'entraîner d'abord :
+    python src/model_trainer.py
+
+    # Lancer le dashboard
+    streamlit run app/main.py
+    ```
+---
+
+## 📂 Structure du Projet
+
+```text
+fraud-monitor/
+├── app/
+│   ├── main.py          # Interface Streamlit (Front-end)
+│   └── fraud_model.pkl  # Modèle entraîné (Back-end)
+├── data/                # Données brutes (Non incluses sur GitHub)
+├── notebooks/           # Laboratoire de recherche (EDA, Tests)
+├── src/
+│   ├── data_loader.py   # Script ETL
+│   └── model_trainer.py # Script d'entraînement IA
+├── requirements.txt     # Dépendances
+└── README.md            # Documentation
