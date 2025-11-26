@@ -30,3 +30,30 @@ C -->|SMOTE| D[Génération Données Synthétiques]
 D --> E[Entraînement Modèle]
 E --> F[Logistic Regression Pondérée]
 F --> G[Dashboard Streamlit]
+```
+
+1. Exploration (EDA)
+Analyse des distributions (Montants, Temps).
+Mise en évidence du ratio critique (0.17% fraude vs 99.83% légitime).
+Les analyses détaillées sont disponibles dans le dossier /notebooks.
+
+---
+
+2. Stratégie de Modélisation
+Problème : Un modèle standard ignorerait la fraude pour maximiser sa précision globale (Accuracy Paradox).
+Solution : Utilisation de SMOTE (Synthetic Minority Over-sampling Technique) pour rééquilibrer l'entraînement.
+Algorithme : LogisticRegression avec le paramètre class_weight='balanced'.
+
+---
+
+📂 Structure du Projet : 
+
+fraud-monitor/
+├── app/
+│   ├── main.py          # Interface Streamlit (Front-end)
+│   └── fraud_model.pkl  # Modèle entraîné (Back-end)
+├── data/                # Données brutes (Non incluses sur GitHub)
+├── notebooks/           # Laboratoire de recherche (EDA, Tests)
+├── src/                 # Scripts ETL et Entraînement
+├── requirements.txt     # Dépendances
+└── README.md            # Documentation
